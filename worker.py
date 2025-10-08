@@ -46,8 +46,14 @@ def update(job_id, **fields):
 
 def upload_public(src_path, dest_path):
     with open(src_path, "rb") as f:
-        sb.storage.from_(BUCKET).upload(dest_path, f, {"content-type":"video/mp4", "upsert": True})
+        # Use string options (or just drop upsert entirely)
+        sb.storage.from_(BUCKET).upload(
+            dest_path, 
+            f, 
+            {"contentType": "video/mp4", "upsert": "true"}  # <- strings, not bool
+        )
     return f"{PUBLIC_BASE}/{dest_path}"
+
 
 def ensure_bucket():
     try:
