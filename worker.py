@@ -9,7 +9,7 @@ PUBLIC_BASE = f"{SB_URL}/storage/v1/object/public"
 sb: Client = create_client(SB_URL, SB_KEY)
 
 def claim_job():
-  res = sb.table("jobs").select("*").eq("status","ready").order("created_at", asc=True).limit(1).execute()
+  res = sb.table("jobs").select("*").eq("status", "ready").order("created_at", desc=False).limit(1).execute()
   arr = res.data or []
   return arr[0] if arr else None
 
