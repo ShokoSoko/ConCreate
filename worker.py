@@ -1,6 +1,16 @@
 import os, time, subprocess, requests
 from supabase import create_client, Client
 
+
+def mask(s: str, keep=4):
+    if not s: return "MISSING"
+    return "*"*(len(s)-keep) + s[-keep:]
+
+print("ENV CHECK:",
+      "URL:", "ok" if os.getenv("SUPABASE_URL") else "MISSING",
+      "| SRK:", mask(os.getenv("SUPABASE_SERVICE_ROLE_KEY")))
+print("BUCKET:", os.getenv("BUCKET","videos"), flush=True)
+
 SB_URL = os.environ["SUPABASE_URL"]
 SB_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]  # SERVICE key (server-only)
 BUCKET = "videos"
