@@ -76,4 +76,36 @@ def process_job(job):
     subprocess.check_call(["ffmpeg","-y","-ss","00:00:05","-i",in_path,"-t","5","-c","copy", out1])
 
     # 3) Upload to storage
-    dest = f"outputs/{job_id}/clip1.mp4"  # NOTE: no_
+    dest = f"outputs/{job_id}/clip1.mp4"  # NOTE: no bucket prefix here
+    url = upload_public(out1, dest)
+    log(f"[{job_id}] Uploaded -> {url}")
+
+    # 4) Finalize
+    outputs = [{"url": url, "label": "clip1"}]
+    update(job_id, progress=100, status="done", outputs=outputs)
+    log(f"[{job_id}] DONE")
+
+def main():
+    log("Worker booted. Checking bucket...")
+    ensure_bucket()
+    log("Bucket OK. Polling for jobs...")
+    while True:
+        try:
+            job = claim_job()
+            if not job:
+                time.sleep(2)
+                continue
+            try:
+                process_job(job)
+            except subprocess.CalledProcessError as e:
+                log(f"[{job['id']}] Subprocess error:", e)
+                update(job["id"], status="error", error=str(e))
+            except Exception as e:
+                log(f"[{job['id']}] UNEXPECTED ERROR:", e)
+                update(job["id"], status="error", error=str(e))
+        except Exception as loop_err:
+            log("LOOP ERROR (will retry):", loop_err)
+            time.sleep(3)
+
+if __name__ == "__main__":
+    main()
