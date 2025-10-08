@@ -74,7 +74,7 @@ def process_job(job):
 
     # 1) Download from YouTube
     log(f"[{job_id}] yt-dlp start")
-    subprocess.check_call(["yt-dlp","-f","mp4","-o",in_path, source_url])
+    subprocess.check_call(["yt-dlp","-t","mp4","-o",in_path, source_url])
     log(f"[{job_id}] yt-dlp done")
 
     # 2) DEMO transform
