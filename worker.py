@@ -36,7 +36,7 @@ PUBLIC_BASE = f"{SB_URL}/storage/v1/object/public"
 
 def claim_job():
     # Oldest 'ready' job
-    res = sb.table("jobs").select("*").eq("status", "ready").order("created_at", False).limit(1).execute()
+    res = sb.table("jobs").select("*").eq("status", "ready").order("created_at", desc=False).limit(1).execute()
     items = res.data or []
     return items[0] if items else None
 
